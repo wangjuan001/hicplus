@@ -70,7 +70,7 @@ def matrix_extract(chrN1,chrN2, binsize, start1, start2):
 
 
 def prediction(M,chrN,N):
-    low_resolution_samples, index = utils.divide(M,chrN)
+    low_resolution_samples, index = divide(M,chrN)
 
     batch_size = low_resolution_samples.shape[0] #256
 
