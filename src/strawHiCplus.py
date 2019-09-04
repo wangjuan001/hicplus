@@ -14,18 +14,18 @@ from datetime import datetime
 
 startTime = datetime.now()
 
-chrN = '19'
+#chrN = '19'
 binsize= 100000
 inmodel="../model/pytorch_HindIII_model_40000"
 Step=10000000
 
 chrs_length = [249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
-#use_gpu = 0 #opt.cuda
+use_gpu = 0 #opt.cuda
 #if use_gpu and not torch.cuda.is_available():
 #    raise Exception("No GPU found, please run without --cuda")
 
-def divide(HiCmatrix,chrN):
+def divide(HiCmatrix):
     subImage_size = 40
     step = 25
     result = []
@@ -41,7 +41,7 @@ def divide(HiCmatrix,chrN):
 
             result.append([subImage, ])
             tag = 'test'
-            index.append((tag, chrN, i, j))
+            index.append((tag, i, j))
     result = np.array(result)
     print(result.shape)
     result = result.astype(np.double)
@@ -59,18 +59,19 @@ def matrix_extract(chrN1,chrN2, binsize, start1, start2):
     value = result[2]
 
     N = max(col) + 1
-
+    print(N)
     M = csr_matrix((value, (row,col)), shape=(N,N))
     M = csr_matrix.todense(M)
     rowix = range(start1//binsize, end1//binsize+1)
-    colix = range(start2//binsize, end2//binsize +1)
+    colix = range(start2//binsize, end2//binsize+1)
+    print(rowix,colix)
     M = M[np.ix_(rowix, colix)]
-    #print(M.shape)
+    print(M.shape)
     return(M,N)
 
 
-def prediction(M,chrN,N):
-    low_resolution_samples, index = divide(M,chrN)
+def prediction(M,N):
+    low_resolution_samples, index = divide(M)
 
     batch_size = low_resolution_samples.shape[0] #256
 
@@ -111,31 +112,38 @@ def prediction(M,chrN,N):
         #if (int(index[i][1]) != chrN):
         #    continue
         #print index[i]
-        x = int(index[i][2])
-        y = int(index[i][3])
+        x = int(index[i][1])
+        y = int(index[i][2])
         #print np.count_nonzero(y_predict[i])
         prediction_1[x+6:x+34, y+6:y+34] = y_predict[i]
 
     return(prediction_1)
     #np.save( 'test.enhanced.npy', prediction_1)
 
-laststart =  chrs_length[18]//Step*Step
-lastend = chrs_length[18]
 
-for start1 in range(1, laststart, Step):
-    for start2 in range(1, laststart, Step):
-        if start2 < start1:
+for chrN1 in range(1, 22):
+    for chrN2 in range(1,22):
+        if chrN2 < chrN1:
             continue
-
-        print(start1, start2)
-        M,N = matrix_extract(chrN, chrN, binsize, start1, start2)
-        #print(N)
-        end1= start1+Step
-        end2= start2+Step
-        print(str(chrN)+":"+str(start1)+":"+str(end1),str(chrN)+":"+str(start2)+":"+str(end2))
-        low_resolution_samples, index = divide(M,chrN)
-        print(low_resolution_samples.shape)
-        enhM = prediction(M, chrN, N)
+        laststart1 =  chrs_length[chrN1]//Step*Step
+        lastend1 = chrs_length[chrN1]
+        laststart2 =  chrs_length[chrN2]//Step*Step
+        lastend2 = chrs_length[chrN2]
+        for start1 in range(1, laststart1, Step):
+            for start2 in range(1, laststart2, Step):
+                #if start2 < start1:
+                #    continue
+                M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2)
+                #print(N)
+                end1= start1+Step
+                end2= start2+Step
+                print(start1, end1, start2, end2, laststart1, lastend1, laststart2, lastend2)
+                if end2 > lastend2 or end1 > lastend1:
+                    continue
+                print(str(chrN1)+":"+str(start1)+":"+str(end1),str(chrN2)+":"+str(start2)+":"+str(end2))
+                low_resolution_samples, index = divide(M)
+                print(low_resolution_samples.shape)
+                enhM = prediction(M,  N)
 
         #print(enhM.shape)
 
