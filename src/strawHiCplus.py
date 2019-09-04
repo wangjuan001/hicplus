@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import straw
 from scipy.sparse import csr_matrix, coo_matrix
 import numpy as np
-import utils
+#import utils
 from time import gmtime, strftime
 from datetime import datetime
 
@@ -21,9 +21,33 @@ Step=10000000
 
 chrs_length = [249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
-use_gpu = 0 #opt.cuda
-if use_gpu and not torch.cuda.is_available():
-    raise Exception("No GPU found, please run without --cuda")
+#use_gpu = 0 #opt.cuda
+#if use_gpu and not torch.cuda.is_available():
+#    raise Exception("No GPU found, please run without --cuda")
+
+def divide(HiCmatrix,chrN):
+    subImage_size = 40
+    step = 25
+    result = []
+    index = []
+#    chrN = 21  ##need to change.
+
+    total_loci = HiCmatrix.shape[0]
+    for i in range(0, total_loci, step):
+        for j in range(0, total_loci, ):
+            if (i + subImage_size >= total_loci or j + subImage_size >= total_loci):
+                continue
+            subImage = HiCmatrix[i:i + subImage_size, j:j + subImage_size]
+
+            result.append([subImage, ])
+            tag = 'test'
+            index.append((tag, chrN, i, j))
+    result = np.array(result)
+    print(result.shape)
+    result = result.astype(np.double)
+    index = np.array(index)
+    return result, index
+
 
 def matrix_extract(chrN1,chrN2, binsize, start1, start2):
     Step = 10000000
@@ -83,7 +107,7 @@ def prediction(M,chrN,N):
 
     print('predicted sample: ', y_predict.shape, ')  #; index shape is: ', index.shape)
     #print index
-    for i in range(0, y_predict.shape[0]):          
+    for i in range(0, y_predict.shape[0]):
         #if (int(index[i][1]) != chrN):
         #    continue
         #print index[i]
@@ -91,7 +115,7 @@ def prediction(M,chrN,N):
         y = int(index[i][3])
         #print np.count_nonzero(y_predict[i])
         prediction_1[x+6:x+34, y+6:y+34] = y_predict[i]
-    
+
     return(prediction_1)
     #np.save( 'test.enhanced.npy', prediction_1)
 
@@ -102,17 +126,17 @@ for start1 in range(1, laststart, Step):
     for start2 in range(1, laststart, Step):
         if start2 < start1:
             continue
-        
+
         print(start1, start2)
         M,N = matrix_extract(chrN, chrN, binsize, start1, start2)
         #print(N)
         end1= start1+Step
         end2= start2+Step
         print(str(chrN)+":"+str(start1)+":"+str(end1),str(chrN)+":"+str(start2)+":"+str(end2))
-        low_resolution_samples, index = utils.divide(M,chrN)
+        low_resolution_samples, index = divide(M,chrN)
         print(low_resolution_samples.shape)
         enhM = prediction(M, chrN, N)
 
         #print(enhM.shape)
 
-print(datetime.now() - startTime) 
+print(datetime.now() - startTime)
