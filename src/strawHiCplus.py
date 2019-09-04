@@ -6,7 +6,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
 import straw
-from scipy.sparse import csr_matrix, coo_matrix
+from scipy.sparse import csr_matrix, coo_matrix, vstack, hstack
+from scipy import sparse
 import numpy as np
 #import utils
 from time import gmtime, strftime
@@ -17,7 +18,7 @@ startTime = datetime.now()
 #chrN = '19'
 binsize= 100000
 inmodel="../model/pytorch_HindIII_model_40000"
-Step=10000000
+Step=200000000
 
 chrs_length = [249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
@@ -33,6 +34,7 @@ def divide(HiCmatrix):
 #    chrN = 21  ##need to change.
 
     total_loci = HiCmatrix.shape[0]
+    #print(HiCmatrix.shape)
     for i in range(0, total_loci, step):
         for j in range(0, total_loci, ):
             if (i + subImage_size >= total_loci or j + subImage_size >= total_loci):
@@ -49,10 +51,13 @@ def divide(HiCmatrix):
     return result, index
 
 
-def matrix_extract(chrN1,chrN2, binsize, start1, start2):
-    Step = 10000000
-    end1=start1+Step
-    end2=start2+Step
+def matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize):
+    Step = 200000000
+    end1=start1+Step + shiftsize
+    end2=start2+Step + shiftsize
+    if end2 > lastend2 or end1 > lastend1:
+        end1 = lastend1
+        end2 = lastend2
     result = straw.straw('NONE', '../data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
@@ -121,30 +126,44 @@ def prediction(M,N):
     #np.save( 'test.enhanced.npy', prediction_1)
 
 
-for chrN1 in range(1, 22):
-    for chrN2 in range(1,22):
-        if chrN2 < chrN1:
-            continue
-        laststart1 =  chrs_length[chrN1]//Step*Step
-        lastend1 = chrs_length[chrN1]
-        laststart2 =  chrs_length[chrN2]//Step*Step
-        lastend2 = chrs_length[chrN2]
-        for start1 in range(1, laststart1, Step):
-            for start2 in range(1, laststart2, Step):
-                if chrN1 == ChrN2 and start2 < start1:
-                    continue
-                M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2)
-                #print(N)
-                end1= start1+Step
-                end2= start2+Step
-                #print(start1, end1, start2, end2, laststart1, lastend1, laststart2, lastend2)
-                if end2 > lastend2 or end1 > lastend1:
-                    continue
-                print(str(chrN1)+":"+str(start1)+":"+str(end1),str(chrN2)+":"+str(start2)+":"+str(end2))
-                low_resolution_samples, index = divide(M)
-                print(low_resolution_samples.shape)
-                enhM = prediction(M,  N)
+# Allh = np.array([])
+# for chrN1 in range(1, 22):
+#     Allv = []
+#     for chrN2 in range(1,22):
+#         if chrN2 < chrN1:
+#             continue
+#
 
+def chrMatrix_pred(chrN1, chrN2):
+    laststart1 =  chrs_length[chrN1]//Step*Step
+    lastend1 = chrs_length[chrN1]
+    laststart2 =  chrs_length[chrN2]//Step*Step
+    lastend2 = chrs_length[chrN2]
+    chrh = np.array([])
+    for start1 in range(1, laststart1, Step):
+        chrv = []
+        for start2 in range(1, laststart2, Step):
+            #if chrN1 == chrN2 and start2 < start1:
+            #    continue
+            M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize=15)
+            #print(N)
+
+            #low_resolution_samples, index = divide(M)
+            #print(low_resolution_samples.shape)
+            enhM = prediction(M,  N)
+            #print(enhM.shape)
+            senhM = sparse.csr_matrix(enhM)
+            chrv = vstack([chrv, senhM])#.toarray()
+            print(chrv.shape)
+        chrh = hstack([chrh, chrv]) if chrh.size else chrv#.toarray()
+    chrh = chrh.toarray()
+    return(chrh)
+    #chrh.toarray()
+
+
+chr1 = chrMatrix_pred(1,1)
+print(chr1.shape)
+np.save('chr1.pred.npy', chr1)
         #print(enhM.shape)
 
 print(datetime.now() - startTime)
