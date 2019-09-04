@@ -53,7 +53,7 @@ def matrix_extract(chrN1,chrN2, binsize, start1, start2):
     Step = 10000000
     end1=start1+Step
     end2=start2+Step
-    result = straw.straw('NONE', '../data/test.hic',str(chrN1)+":"+str(start1)+":"+str(end1),str(chrN2)+":"+str(start2)+":"+str(end2),'BP',binsize)
+    result = straw.straw('NONE', '../data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
@@ -131,13 +131,13 @@ for chrN1 in range(1, 22):
         lastend2 = chrs_length[chrN2]
         for start1 in range(1, laststart1, Step):
             for start2 in range(1, laststart2, Step):
-                #if start2 < start1:
-                #    continue
+                if chrN1 == ChrN2 and start2 < start1:
+                    continue
                 M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2)
                 #print(N)
                 end1= start1+Step
                 end2= start2+Step
-                print(start1, end1, start2, end2, laststart1, lastend1, laststart2, lastend2)
+                #print(start1, end1, start2, end2, laststart1, lastend1, laststart2, lastend2)
                 if end2 > lastend2 or end1 > lastend1:
                     continue
                 print(str(chrN1)+":"+str(start1)+":"+str(end1),str(chrN2)+":"+str(start2)+":"+str(end2))
