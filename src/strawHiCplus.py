@@ -16,11 +16,11 @@ from datetime import datetime
 startTime = datetime.now()
 
 #chrN = '19'
-binsize= 100000
+binsize= 10000
 inmodel="../model/pytorch_HindIII_model_40000"
-Step=200000000
+Step = 20000000
 
-chrs_length = [249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
+chrs_length = [0,249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
 use_gpu = 0 #opt.cuda
 #if use_gpu and not torch.cuda.is_available():
@@ -52,26 +52,29 @@ def divide(HiCmatrix):
 
 
 def matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize):
-    Step = 200000000
+    #Step = 20000000
     end1=start1+Step + shiftsize
     end2=start2+Step + shiftsize
-    if end2 > lastend2 or end1 > lastend1:
+    if end1 > lastend1:
         end1 = lastend1
+    if end2 > lastend2:
         end2 = lastend2
-    result = straw.straw('NONE', '../data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
+    result = straw.straw('NONE', '/Users/jwn2291/Desktop/strawHiC/HiCplus_straw/data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
 
-    N = max(col) + 1
-    print(N)
+    N1 = end1//binsize+1  ## change the matrix shape. 
+    N2 = end2//binsize+1
+    #N = max(max(row)+1, max(col) + 1)
+    #print(N)
     M = csr_matrix((value, (row,col)), shape=(N,N))
     M = csr_matrix.todense(M)
     rowix = range(start1//binsize, end1//binsize+1)
     colix = range(start2//binsize, end2//binsize+1)
     print(rowix,colix)
     M = M[np.ix_(rowix, colix)]
-    print(M.shape)
+    N = M.shape[1]
     return(M,N)
 
 
@@ -121,8 +124,8 @@ def prediction(M,N):
         y = int(index[i][2])
         #print np.count_nonzero(y_predict[i])
         prediction_1[x+6:x+34, y+6:y+34] = y_predict[i]
-
-    return(prediction_1)
+    prediction_2 = prediction_1[6:N-6, 6:N-6]
+    return(prediction_2)
     #np.save( 'test.enhanced.npy', prediction_1)
 
 
@@ -135,17 +138,18 @@ def prediction(M,N):
 #
 
 def chrMatrix_pred(chrN1, chrN2):
-    laststart1 =  chrs_length[chrN1]//Step*Step
+    laststart1 =  chrs_length[chrN1]//Step*Step + Step
     lastend1 = chrs_length[chrN1]
-    laststart2 =  chrs_length[chrN2]//Step*Step
+    laststart2 =  chrs_length[chrN2]//Step*Step + Step
+    #print(laststart1, chrs_length[chrN2])
     lastend2 = chrs_length[chrN2]
     chrh = np.array([])
     for start1 in range(1, laststart1, Step):
-        chrv = []
+        chrv = np.array([])
         for start2 in range(1, laststart2, Step):
             #if chrN1 == chrN2 and start2 < start1:
             #    continue
-            M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize=15)
+            M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize=15*binsize)
             #print(N)
 
             #low_resolution_samples, index = divide(M)
@@ -153,17 +157,17 @@ def chrMatrix_pred(chrN1, chrN2):
             enhM = prediction(M,  N)
             #print(enhM.shape)
             senhM = sparse.csr_matrix(enhM)
-            chrv = vstack([chrv, senhM])#.toarray()
-            print(chrv.shape)
-        chrh = hstack([chrh, chrv]) if chrh.size else chrv#.toarray()
+            chrv = hstack([chrv, senhM]) if chrv.size else senhM#.toarray()
+            #print(chrv.shape)
+        chrh = vstack([chrh, chrv]) #if chrh.size else chrv#.toarray()
     chrh = chrh.toarray()
     return(chrh)
     #chrh.toarray()
 
 
-chr1 = chrMatrix_pred(1,1)
+chr1 = chrMatrix_pred(22,22)
 print(chr1.shape)
-np.save('chr1.pred.npy', chr1)
+np.save('chr22.pred.npy', chr1)
         #print(enhM.shape)
 
 print(datetime.now() - startTime)
