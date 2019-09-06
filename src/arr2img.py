@@ -12,11 +12,11 @@ InFile = sys.argv[1] ## input .npy file
 HiC_max_value = 100
 arr = np.load(InFile).astype(np.float32)
 #print(arr)
-arr = ma.log2(arr)
+arr = ma.log(arr)+2
 arr = arr.filled(0)
-MaxValue= np.amax(arr)
+MaxValue= np.mean(arr)
 
-arr = arr/MaxValue
+arr = arr-MaxValue/MaxValue
 #print(arr)
 #arr = np.ma.masked_where(arr < 0.0001, arr)
 
