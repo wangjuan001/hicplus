@@ -55,17 +55,16 @@ def matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shi
     #Step = 20000000
     end1=start1+Step + shiftsize
     end2=start2+Step + shiftsize
-    if end1 > lastend1:
-        end1 = lastend1
-    if end2 > lastend2:
-        end2 = lastend2
+    #if end1 > lastend1:
+    #    end1 = lastend1
+    #if end2 > lastend2:
+    #    end2 = lastend2
     result = straw.straw('NONE', '/Users/jwn2291/Desktop/strawHiC/HiCplus_straw/data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
 
-    N1 = end1//binsize+1  ## change the matrix shape. 
-    N2 = end2//binsize+1
+    N = max(chrs_length[chrN2]//binsize+Step//binsize, chrs_length[chrN1]//binsize+Step// binsize) +1
     #N = max(max(row)+1, max(col) + 1)
     #print(N)
     M = csr_matrix((value, (row,col)), shape=(N,N))
@@ -143,13 +142,14 @@ def chrMatrix_pred(chrN1, chrN2):
     laststart2 =  chrs_length[chrN2]//Step*Step + Step
     #print(laststart1, chrs_length[chrN2])
     lastend2 = chrs_length[chrN2]
+    shiftsize=15*binsize
     chrh = np.array([])
     for start1 in range(1, laststart1, Step):
         chrv = np.array([])
         for start2 in range(1, laststart2, Step):
             #if chrN1 == chrN2 and start2 < start1:
             #    continue
-            M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize=15*binsize)
+            M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize )
             #print(N)
 
             #low_resolution_samples, index = divide(M)
