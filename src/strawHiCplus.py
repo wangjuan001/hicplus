@@ -142,11 +142,12 @@ def chrMatrix_pred(chrN1, chrN2):
     laststart2 =  chrs_length[chrN2]//Step*Step + Step
     #print(laststart1, chrs_length[chrN2])
     lastend2 = chrs_length[chrN2]
+    laststart = max(laststart1, laststart2)
     shiftsize=15*binsize
     chrh = np.array([])
-    for start1 in range(1, laststart1, Step):
+    for start1 in range(1, laststart, Step):
         chrv = np.array([])
-        for start2 in range(1, laststart2, Step):
+        for start2 in range(1, laststart, Step):
             #if chrN1 == chrN2 and start2 < start1:
             #    continue
             M,N = matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize )
@@ -165,9 +166,9 @@ def chrMatrix_pred(chrN1, chrN2):
     #chrh.toarray()
 
 
-chr1 = chrMatrix_pred(22,22)
+chr1 = chrMatrix_pred(22,12)
 print(chr1.shape)
-np.save('chr22.pred.npy', chr1)
+np.save('chr22.chr21.pred.npy', chr1)
         #print(enhM.shape)
 
 print(datetime.now() - startTime)
