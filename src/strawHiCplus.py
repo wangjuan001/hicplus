@@ -12,13 +12,26 @@ import numpy as np
 #import utils
 from time import gmtime, strftime
 from datetime import datetime
+import argparse
 
 startTime = datetime.now()
 
+parser = argparse.ArgumentParser(description='PyTorch Super Res From .hic file')
+parser.add_argument('-i', '--input', type=str, required=True, help='input .hic file to use')
+parser.add_argument('-m','--model', type=str, required=True, help='model file to use')
+parser.add_argument('-b','--binsize', type=str, help='binsize, default:10000', default = 10000)
+#parser.add_argument('--scale_factor', type=float, help='factor by which super resolution needed')
+parser.add_argument('-c','--chrN', nargs=2, metavar=('chrN1','chrN2'), type=int,required=True, help='chromosome number')
+#parser.add_argument('--cuda', action='store_true', help='use cuda')
+opt = parser.parse_args()
+
+print(opt)
 #chrN = '19'
-binsize= 10000
-inmodel="../model/pytorch_HindIII_model_40000"
+inFile = opt.input
+binsize = opt.binsize #10000
+inmodel= opt.model#"../model/pytorch_HindIII_model_40000"
 Step = 20000000
+chrN1, chrN2 = opt.chrN
 
 chrs_length = [0,249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
@@ -59,7 +72,7 @@ def matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shi
     #    end1 = lastend1
     #if end2 > lastend2:
     #    end2 = lastend2
-    result = straw.straw('NONE', '/Users/jwn2291/Desktop/strawHiC/HiCplus_straw/data/test.hic',str(chrN1),str(chrN2),'BP',binsize)
+    result = straw.straw('NONE', inFile, str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
@@ -166,9 +179,9 @@ def chrMatrix_pred(chrN1, chrN2):
     #chrh.toarray()
 
 
-chr1 = chrMatrix_pred(22,12)
-print(chr1.shape)
-np.save('chr22.chr21.pred.npy', chr1)
+Mat = chrMatrix_pred(chrN1,chrN2)
+print(Mat.shape)
+np.save('chrN1%s.chrN2%s.pred.npy'%(chrN1,chrN2), Mat)
         #print(enhM.shape)
 
 print(datetime.now() - startTime)
