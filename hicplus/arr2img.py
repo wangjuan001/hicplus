@@ -32,7 +32,7 @@ arr = np.log(arr)
 #arr = arr.astype('uint8')
 cmap = plt.get_cmap('Reds')
 
-plt.imshow(arr, interpolation='none', cmap=cmap, vmax=1)
+plt.imshow(arr, interpolation='none', cmap=cmap, vmax=0.5)
 plt.colorbar()
 plt.savefig('test.png', dpi=300, bbox_inches='tight')
 

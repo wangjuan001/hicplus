@@ -84,7 +84,7 @@ def prediction(M,N,inmodel):
 #             continue
 #
 
-def chr_pred(chrN1, chrN2, binsize, inmodel):
+def chr_pred(hicfile, chrN1, chrN2, binsize, inmodel):
     Step = 20000000
     laststart1 =  chrs_length[chrN1]//Step*Step + Step
     lastend1 = chrs_length[chrN1]
@@ -92,14 +92,14 @@ def chr_pred(chrN1, chrN2, binsize, inmodel):
     #print(laststart1, chrs_length[chrN2])
     lastend2 = chrs_length[chrN2]
     laststart = max(laststart1, laststart2)
-    shiftsize=15*binsize
+    shiftsize=12*binsize
     chrh = np.array([])
     for start1 in range(1, laststart, Step):
         chrv = np.array([])
         for start2 in range(1, laststart, Step):
             #if chrN1 == chrN2 and start2 < start1:
             #    continue
-            M,N = utils.frag_matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize, Step)
+            M,N = utils.frag_matrix_extract(hicfile, chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize, Step)
             #print(N)
 
             #low_resolution_samples, index = divide(M)
@@ -118,9 +118,10 @@ def main(args):
     chrN1, chrN2 = args.chrN
     binsize = args.binsize
     inmodel = args.model
-    Mat = chr_pred(chrN1,chrN2,binsize,inmodel).toarray()
+    hicfile = args.inputfile
+    Mat = chr_pred(hicfile,chrN1,chrN2,binsize,inmodel).toarray()
     print(Mat.shape)
-    np.save('chrN1%s.chrN2%s.pred.npy'%(chrN1,chrN2), Mat)
+    np.save('chr%s.chr%s.pred.npy'%(chrN1,chrN2), Mat)
         #print(enhM.shape)
 if __name__ == '__main__':
     main()

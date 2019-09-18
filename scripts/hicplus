@@ -12,7 +12,7 @@ def getargs():
             help='''Train CNN model per chromosome''')
     subtrain.set_defaults(func=train_models.main)
     subchrom = subparsers.add_parser('pred_chromosome',
-            help='''prediction interaction frequencies for inter and intra chromosomes''')
+            help='''predict high resolution interaction frequencies for inter and intra chromosomes''')
     subchrom.set_defaults(func=pred_chromosome.main)
     #subgen = subparsers.add_parser('score_genome',
     #        help='''prediction interaction frequencies for the whole genome''')

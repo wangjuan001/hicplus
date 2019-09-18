@@ -64,7 +64,7 @@ def train(lowres,highres, outModel):
     # Reshape the high-quality Hi-C sample as the target value of the training.
     sample_size = low_resolution_samples.shape[-1]
     padding = conv2d1_filters_size + conv2d2_filters_size + conv2d3_filters_size - 3
-    half_padding = padding / 2
+    half_padding = padding // 2
     output_length = sample_size - padding
     Y = []
     for i in range(high_resolution_samples.shape[0]):
@@ -121,7 +121,7 @@ def train(lowres,highres, outModel):
 
         print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
-        log.write(str(epoch) + ', ' + str(running_loss/i,) + '\n')
+        log.write(str(epoch) + ', ' + str(running_loss//i,) + '\n')
         running_loss = 0.0
         running_loss_validate = 0.0
 	    # save the model every 100 epoches

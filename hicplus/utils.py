@@ -7,10 +7,11 @@ from scipy.sparse import csr_matrix, coo_matrix, vstack, hstack
 from scipy import sparse
 import numpy as np
 
+chrs_length = [0,249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
-def matrix_extract(chrN1, binsize):
+def matrix_extract(chrN1, binsize, hicfile):
 
-    result = straw.straw('NONE', inFile, str(chrN1),str(chrN1),'BP',binsize)
+    result = straw.straw('NONE', hicfile, str(chrN1),str(chrN1),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
@@ -18,14 +19,15 @@ def matrix_extract(chrN1, binsize):
     #print(N)
     M = csr_matrix((value, (row,col)), shape=(N,N))
     M = csr_matrix.todense(M)
+    M = np.array(M)
     #rowix = range(start1//binsize, end1//binsize+1)
     #colix = range(start2//binsize, end2//binsize+1)
     #print(rowix,colix)
     #M = M[np.ix_(rowix, colix)]
-    N = M.shape[1]
-    return(M,N)
+    #N = M.shape[1]
+    return(M)
 
-def frag_matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize,Step):
+def frag_matrix_extract(hicfile, chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize,Step):
 
     end1=start1+Step + shiftsize
     end2=start2+Step + shiftsize
@@ -33,7 +35,7 @@ def frag_matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2
     #    end1 = lastend1
     #if end2 > lastend2:
     #    end2 = lastend2
-    result = straw.straw('NONE', inFile, str(chrN1),str(chrN2),'BP',binsize)
+    result = straw.straw('NONE', hicfile, str(chrN1),str(chrN2),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
