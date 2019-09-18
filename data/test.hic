@@ -1,1 +1,0 @@
-/projects/b1100/Sarcoma/HiC/P247minus-DpnII-allReps-filtered.hic
