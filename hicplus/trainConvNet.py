@@ -1,4 +1,4 @@
-# Author: Yan Zhang  
+# Author: Yan Zhang
 # Email: zhangyan.cse (@) gmail.com
 
 import sys
@@ -33,7 +33,7 @@ HiC_max_value = 100
 batch_size = 512
 
 
-# This block is the actual training data used in the training. The training data is too large to put on Github, so only toy data is used. 
+# This block is the actual training data used in the training. The training data is too large to put on Github, so only toy data is used.
 # cell = "GM12878_replicate"
 # chrN_range1 = '1_8'
 # chrN_range = '1_8'
@@ -54,14 +54,14 @@ batch_size = 512
 def train(lowres,highres, outModel="model"):
     low_resolution_samples = lowres.astype(np.float32) * down_sample_ratio
 
-    high_resolution_samples = highres.astype(np.float32) 
+    high_resolution_samples = highres.astype(np.float32)
 
     low_resolution_samples = np.minimum(HiC_max_value, low_resolution_samples)
     high_resolution_samples = np.minimum(HiC_max_value, high_resolution_samples)
 
 
 
-    # Reshape the high-quality Hi-C sample as the target value of the training. 
+    # Reshape the high-quality Hi-C sample as the target value of the training.
     sample_size = low_resolution_samples.shape[-1]
     padding = conv2d1_filters_size + conv2d2_filters_size + conv2d3_filters_size - 3
     half_padding = padding / 2
@@ -97,32 +97,32 @@ def train(lowres,highres, outModel="model"):
     # write the log file to record the training process
     with open('HindIII_train.txt', 'w') as log:
         for epoch in range(0, 3500):
-            for i, (v1, v2) in enumerate(zip(lowres_loader, hires_loader)):    
+            for i, (v1, v2) in enumerate(zip(lowres_loader, hires_loader)):
                 if (i == len(lowres_loader) - 1):
-                    continue 
-		_lowRes, _ = v1
-		_highRes, _ = v2
-	    
+                    continue
+        _lowRes, _ = v1
+        _highRes, _ = v2
+
 
 		_lowRes = Variable(_lowRes)
 		_highRes = Variable(_highRes)
 
-	    
+
 		if use_gpu:
 		    _lowRes = _lowRes.cuda()
 		    _highRes = _highRes.cuda()
 		optimizer.zero_grad()
 		y_prediction = Net(_lowRes)
 
-		loss = _loss(y_prediction, _highRes) 
+		loss = _loss(y_prediction, _highRes)
 
-		loss.backward()  
+		loss.backward()
 		optimizer.step()
 
 		running_loss += loss.data[0]
-	    
+
 	    print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-	
+
 	    log.write(str(epoch) + ', ' + str(running_loss/i,) + '\n')
 	    running_loss = 0.0
 	    running_loss_validate = 0.0
@@ -130,11 +130,3 @@ def train(lowres,highres, outModel="model"):
 	    if (epoch % 100 == 0):
 		torch.save(Net.state_dict(), outModel + str(epoch) + str('.model'))
 		pass
-
-
-
-
-
-
-
-
