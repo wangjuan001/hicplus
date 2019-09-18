@@ -1,6 +1,6 @@
 import os,sys
 from torch.utils import data
-import model
+from hicplus import model
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,7 +9,7 @@ import straw
 from scipy.sparse import csr_matrix, coo_matrix, vstack, hstack
 from scipy import sparse
 import numpy as np
-import utils
+from hicplus import utils
 from time import gmtime, strftime
 from datetime import datetime
 import argparse

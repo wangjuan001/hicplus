@@ -7,7 +7,7 @@ import numpy as np
 import pickle
 import os
 import gzip
-import model
+from hicplus import model
 from torch.utils import data
 import torch
 import torch.optim as optim
