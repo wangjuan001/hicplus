@@ -109,8 +109,7 @@ for i, (v1, v2) in enumerate(zip(lowres_loader, hires_loader)):
 
     running_loss += loss.data[0]
 
-print('-------', i, running_loss, strftime("%Y-%m-%d %H:%M:%S", gmtime())
-
+print('-------', i, running_loss, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
 y_prediction = y_prediction.data.cpu().numpy()
 
