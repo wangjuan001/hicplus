@@ -10,7 +10,7 @@ def getargs():
     subparsers = parser.add_subparsers(dest='subcommands')
     subtrain = subparsers.add_parser('train',
             help='''Train CNN model per chromosome''')
-    subtrain.set_defaults(func=train_models.train_pipeline)
+    subtrain.set_defaults(func=train_models.main)
     subchrom = subparsers.add_parser('pred_chromosome',
             help='''prediction interaction frequencies for inter and intra chromosomes''')
     subchrom.set_defaults(func=pred_chromosome.main)
@@ -35,7 +35,7 @@ def getargs():
                          help = 'choose one chromosome to do the model training.',
                          type = int, default = 21)
         i.add_argument('-o', '--outmodel',
-                         help = 'output model name. default = model',
+                         help = 'output model name. default = model_epochnumber.model',
                          type = str, default = 'model')
     for i in subs[1:]:
         i.add_argument('-i', '--inputfile',
