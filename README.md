@@ -1,6 +1,12 @@
 ## Introduction
 This is a supplement for HiCplus, which accept .hic file. Previous HiCplus requires high memory and GPU when predicting to a high resolution matrix(e.g.10kb). Here, we can make high resolution predictions on CPU with relatively low memory requirements (<100G) on whole chromosomes.
 
+### Installation
+conda create -n plus python=3.6 numpy pytorch torchvision
+source activate plus
+git clone -b packageup --single-branch https://github.com/wangjuan001/HiCplus_straw.git
+cd HiCplus_straw
+python setup.py install
 
 ### Usage
 input .hic file  (low resolution)
