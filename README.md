@@ -10,8 +10,8 @@ conda config --add channels pytorch
 conda create -n plus python=3.6 numpy pytorch torchvision scipy
 python3 -m pip install hic-straw  
 source activate plus  
-git clone -b packageup --single-branch https://github.com/wangjuan001/HiCplus_straw.git  
-cd HiCplus_straw  
+git clone https://github.com/wangjuan001/hicplus.git  
+cd hicplus
 python setup.py install  
 ```
 
