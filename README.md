@@ -35,7 +35,7 @@ optional arguments:
 
 ```
 
-HiCplus training process requires GPU node.
+HiCplus training process requires GPU nodes.
 ```
 hicplus train
 
@@ -81,3 +81,8 @@ e.g.
 ```
 hicplus pred_chromosome -i test.hic -m ../HiCplus_straw/model/pytorch_HindIII_model_40000 -c 19 22
 ```
+
+### Model
+It's important to use a suitable model when doing prediction. At this moment we only provide one model, which is suitable for 200~300M reads hic data (downsampling rate at 16).   
+
+For other sequencing depth data, the users need to train models at a different downsampling rate (e.g. 40). For more information about how to select downsampling rate, please refer to the original HiCplus paper.
