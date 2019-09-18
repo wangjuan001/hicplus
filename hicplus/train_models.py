@@ -18,9 +18,9 @@ chrs_length = [249250621,243199373,198022430,191154276,180915260,171115067,15913
 #chrN = 21
 #scale = 16
 
-def train_pipeline(infile, chrN, scale, outModel):
+def main(args):
 
-    highres = matrix_extract(chrN, binsize)
+    highres = matrix_extract(args.chromosome, 10000)
 
     print('dividing, filtering and downsampling files...')
 
@@ -29,13 +29,13 @@ def train_pipeline(infile, chrN, scale, outModel):
     print(highres_sub.shape)
     #np.save(infile+"highres",highres_sub)
 
-    lowres = utils.genDownsample(highres,1/float(scale))
+    lowres = utils.genDownsample(highres,1/float(args.scalerate))
     lowres_sub,index = utils.divide(lowres, chrN)
     print(lowres_sub.shape)
     #np.save(infile+"lowres",lowres_sub)
 
     print('start training...')
-    trainConvNet.train(lowres_sub,highres_sub,outModel)
+    trainConvNet.train(lowres_sub,highres_sub,args.outModel)
 
 
     print('finished...')

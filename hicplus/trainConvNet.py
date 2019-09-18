@@ -51,7 +51,7 @@ batch_size = 512
 #low_resolution_samples = np.load(gzip.GzipFile('/home/zhangyan/SRHiC_samples/IMR90_down_HINDIII16_chr1_8.npy.gz', "r")).astype(np.float32) * down_sample_ratio
 #high_resolution_samples = np.load(gzip.GzipFile('/home/zhangyan/SRHiC_samples/original10k/_IMR90_HindIII_original_chr1_8.npy.gz', "r")).astype(np.float32)
 
-def train(lowres,highres, outModel="model"):
+def train(lowres,highres, outModel):
     low_resolution_samples = lowres.astype(np.float32) * down_sample_ratio
 
     high_resolution_samples = highres.astype(np.float32)

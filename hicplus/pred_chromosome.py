@@ -16,14 +16,14 @@ import argparse
 
 startTime = datetime.now()
 
-
+Step = 20000000
 chrs_length = [0,249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
 use_gpu = 0 #opt.cuda
 #if use_gpu and not torch.cuda.is_available():
 #    raise Exception("No GPU found, please run without --cuda")
 
-def prediction(M,N):
+def prediction(M,N,inmodel):
     low_resolution_samples, index = utils.divide(M)
 
     batch_size = low_resolution_samples.shape[0] #256
@@ -84,7 +84,7 @@ def prediction(M,N):
 #             continue
 #
 
-def chr_pred(chrN1, chrN2):
+def chr_pred(chrN1, chrN2, binsize, inmodel):
     laststart1 =  chrs_length[chrN1]//Step*Step + Step
     lastend1 = chrs_length[chrN1]
     laststart2 =  chrs_length[chrN2]//Step*Step + Step
@@ -103,7 +103,7 @@ def chr_pred(chrN1, chrN2):
 
             #low_resolution_samples, index = divide(M)
             #print(low_resolution_samples.shape)
-            enhM = prediction(M,  N)
+            enhM = prediction(M,  N, inmodel)
             #print(enhM.shape)
             senhM = sparse.csr_matrix(enhM)
             chrv = hstack([chrv, senhM]) if chrv.size else senhM#.toarray()
@@ -113,8 +113,11 @@ def chr_pred(chrN1, chrN2):
     return(chrh)
     #chrh.toarray()
 
-def main():
-    Mat = chr_pred(chrN1,chrN2).toarray()
+def main(args):
+    chrN1, chrN2 = args.chrN
+    binsize = args.binsize
+    inmodel = args.model
+    Mat = chr_pred(chrN1,chrN2,binsize,inmodel).toarray()
     print(Mat.shape)
     np.save('chrN1%s.chrN2%s.pred.npy'%(chrN1,chrN2), Mat)
         #print(enhM.shape)
