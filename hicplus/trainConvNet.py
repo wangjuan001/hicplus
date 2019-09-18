@@ -103,30 +103,28 @@ def train(lowres,highres, outModel="model"):
         _lowRes, _ = v1
         _highRes, _ = v2
 
+        _lowRes = Variable(_lowRes)
+        _highRes = Variable(_highRes)
 
-		_lowRes = Variable(_lowRes)
-		_highRes = Variable(_highRes)
 
+        if use_gpu:
+            _lowRes = _lowRes.cuda()
+            _highRes = _highRes.cuda()
+        optimizer.zero_grad()
+        y_prediction = Net(_lowRes)
 
-		if use_gpu:
-		    _lowRes = _lowRes.cuda()
-		    _highRes = _highRes.cuda()
-		optimizer.zero_grad()
-		y_prediction = Net(_lowRes)
+        loss = _loss(y_prediction, _highRes)
+        loss.backward()
+        optimizer.step()
 
-		loss = _loss(y_prediction, _highRes)
+        running_loss += loss.data[0]
 
-		loss.backward()
-		optimizer.step()
+        print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
-		running_loss += loss.data[0]
-
-	    print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-
-	    log.write(str(epoch) + ', ' + str(running_loss/i,) + '\n')
-	    running_loss = 0.0
-	    running_loss_validate = 0.0
+        log.write(str(epoch) + ', ' + str(running_loss/i,) + '\n')
+        running_loss = 0.0
+        running_loss_validate = 0.0
 	    # save the model every 100 epoches
-	    if (epoch % 100 == 0):
-		torch.save(Net.state_dict(), outModel + str(epoch) + str('.model'))
-		pass
+        if (epoch % 100 == 0):
+            torch.save(Net.state_dict(), outModel + str(epoch) + str('.model'))
+        pass
