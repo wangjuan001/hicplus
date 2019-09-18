@@ -16,7 +16,7 @@ import argparse
 
 startTime = datetime.now()
 
-Step = 20000000
+
 chrs_length = [0,249250621,243199373,198022430,191154276,180915260,171115067,159138663,146364022,141213431,135534747,135006516,133851895,115169878,107349540,102531392,90354753,81195210,78077248,59128983,63025520,48129895,51304566]
 
 use_gpu = 0 #opt.cuda
@@ -85,6 +85,7 @@ def prediction(M,N,inmodel):
 #
 
 def chr_pred(chrN1, chrN2, binsize, inmodel):
+    Step = 20000000
     laststart1 =  chrs_length[chrN1]//Step*Step + Step
     lastend1 = chrs_length[chrN1]
     laststart2 =  chrs_length[chrN2]//Step*Step + Step
@@ -98,7 +99,7 @@ def chr_pred(chrN1, chrN2, binsize, inmodel):
         for start2 in range(1, laststart, Step):
             #if chrN1 == chrN2 and start2 < start1:
             #    continue
-            M,N = utils.frag_matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize )
+            M,N = utils.frag_matrix_extract(chrN1, chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize, Step)
             #print(N)
 
             #low_resolution_samples, index = divide(M)

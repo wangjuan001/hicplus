@@ -25,8 +25,8 @@ def matrix_extract(chrN1, binsize):
     N = M.shape[1]
     return(M,N)
 
-def frag_matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize):
-    #Step = 20000000
+def frag_matrix_extract(chrN1,chrN2, binsize, start1, start2, lastend1, lastend2, shiftsize,Step):
+
     end1=start1+Step + shiftsize
     end2=start2+Step + shiftsize
     #if end1 > lastend1:
