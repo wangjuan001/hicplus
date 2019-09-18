@@ -3,7 +3,7 @@ This is a supplement for HiCplus, which accept .hic file. Previous HiCplus requi
 
 ### Installation
 conda config --add channels pytorch  
-conda create -n plus python=3.6 numpy pytorch torchvision  
+conda create -n plus python=3.6 numpy pytorch torchvision scipy
 source activate plus  
 git clone -b packageup --single-branch https://github.com/wangjuan001/HiCplus_straw.git  
 cd HiCplus_straw  
