@@ -20,6 +20,8 @@ def matrix_extract(chrN1, binsize, hicfile):
     M = csr_matrix((value, (row,col)), shape=(N,N))
     M = csr_matrix.todense(M)
     M = np.array(M)
+    x, y = np.where(M!=0)
+    M[y, x] = M[x, y]
     #rowix = range(start1//binsize, end1//binsize+1)
     #colix = range(start2//binsize, end2//binsize+1)
     #print(rowix,colix)
