@@ -117,7 +117,7 @@ def train(lowres,highres, outModel):
         loss.backward()
         optimizer.step()
 
-        running_loss += loss.data[0]
+        running_loss += loss.data
 
         print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
