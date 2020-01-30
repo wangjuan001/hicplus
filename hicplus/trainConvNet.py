@@ -100,8 +100,8 @@ def train(lowres,highres, outModel):
             for i, (v1, v2) in enumerate(zip(lowres_loader, hires_loader)):
                 if (i == len(lowres_loader) - 1):
                     continue
-        	_lowRes, _ = v1
-        	_highRes, _ = v2
+                _lowRes, _ = v1
+                _highRes, _ = v2
                 
                 _lowRes = Variable(_lowRes)
                 _highRes = Variable(_highRes).unsqueeze(1)
