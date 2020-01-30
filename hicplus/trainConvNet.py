@@ -116,11 +116,11 @@ def train(lowres,highres, outModel):
 		loss.backward()
 		optimizer.step()
 		
-		running_loss += loss.data
+		running_loss += loss.item()
         
 	print('-------', i, epoch, running_loss/i, strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 	
-	log.write(str(epoch) + ', ' + str(running_loss//i,) + '\n')
+	log.write(str(epoch) + ', ' + str(running_loss/i,) +', '+ strftime("%Y-%m-%d %H:%M:%S", gmtime())+ '\n')
 	running_loss = 0.0
 	running_loss_validate = 0.0
 	# save the model every 100 epoches
