@@ -40,6 +40,8 @@ def getargs():
     for i in subs[1:]:
         i.add_argument('-i', '--inputfile',
                          help = 'path to a .hic file.', type = str)
+        i.add_argument('-o', '--output',
+                         help = 'path to an output file.', type = str)        
         i.add_argument('-m', '--model',
                          help = 'path to a model file.', type = str)
         i.add_argument('-b', '--binsize',
