@@ -96,12 +96,12 @@ def writeBed(Mat, outname):
                      '\t'+'chr'+str(line[3])+':'+str(line[4])+'-'+str(line[5])+'\t'+str(line[6])+'\n')
 
 def main():
-    chrN1= args.chrN1
-    chrN2 = args.chrN2
+    chrN1= args.chrN[0]
+    chrN2 = args.chrN[1]
     binsize = args.binsize
     inmodel = args.model
     hicfile = args.inputfile
-    outname = 'chr'+str(chrN1)+'chr'+str(chrN2)+'_'+'pred.txt'
+    outname = args.output
     #outname = 'chr1.pred.txt'
     #### for cool inputfile.
     #c = cooler.Cooler('{}'.format(hicfile))
