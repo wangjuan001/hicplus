@@ -13,7 +13,7 @@ from hicplus import utils
 from time import gmtime, strftime
 from datetime import datetime
 import argparse
-import cooler
+#import cooler
 
 startTime = datetime.now()
 
