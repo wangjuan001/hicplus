@@ -64,8 +64,8 @@ def run():
     # Parse Arguments
     args, commands = getargs()
     # Improve the performance if you don't want to run it
-    #if commands[0] not in ['-h','--help']:
-    #    args.func(args)
+    if commands[0] not in ['-h','--help']:
+        args.func(args)
 
 
 if __name__ == '__main__':
