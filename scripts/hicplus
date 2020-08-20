@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import argparse, sys
 from hicplus import pred_chromosome, train_models, pred_genome
 def getargs():
@@ -14,18 +13,22 @@ def getargs():
     subchrom = subparsers.add_parser('pred_chromosome',
             help='''predict high resolution interaction frequencies for inter and intra chromosomes''')
     subchrom.set_defaults(func=pred_chromosome.main)
+    subgen = subparsers.add_parser('pred_genome',
+            help='''predict high resolution interaction frequencies for genome''')
+    subgen.set_defaults(func=pred_genome.main)
+
     #subgen = subparsers.add_parser('score_genome',
     #        help='''prediction interaction frequencies for the whole genome''')
     #subgen.set_defaults(func=score_genome.main)
 
-    subs=[subtrain,subchrom]
+    subs=[subtrain,subchrom, subgen]
     #subpool.add_argument('-l','--lower',
     #                     help = 'Lower bound of report in bp (20000)',
     #                     type = int, default=20000)
     #subpool.add_argument('-u','--upper',
     #                     help = 'Upper bound of report in bp (300000)',
     #                     type = int, default=300000)
-    for i in subs[:-1]:
+    for i in subs[:1]:
         i.add_argument('-i', '--inputfile',
                          help = 'path to a .hic file.', type = str)
         i.add_argument('-r', '--scalerate',
@@ -37,11 +40,14 @@ def getargs():
         i.add_argument('-o', '--outmodel',
                          help = 'output model name. default = model_epochnumber.model',
                          type = str, default = 'model')
-    for i in subs[1:]:
+        i.add_argument('-l', '--log',
+                         help = 'output log file. default = train_log.txt',
+                         type = str, default = 'train_log' )
+    for i in subs[1:-1]:
         i.add_argument('-i', '--inputfile',
                          help = 'path to a .hic file.', type = str)
-        i.add_argument('-o', '--output',
-                         help = 'path to an output file.', type = str)        
+        i.add_argument('-o', '--outputfile',
+                         help = 'path to an output file.', type = str)
         i.add_argument('-m', '--model',
                          help = 'path to a model file.', type = str)
         i.add_argument('-b', '--binsize',
@@ -50,9 +56,20 @@ def getargs():
         i.add_argument('-c','--chrN', nargs=2, metavar=('chrN1','chrN2'),
                          type=int,required=True, help='chromosome number')
 
+
+    for i in subs[2:]:
+        i.add_argument('-i', '--inputfile',
+                         help = 'path to a .hic file.', type = str)
+        i.add_argument('-m', '--model',
+                         help = 'path to a model file.', type = str)
+        i.add_argument('-b', '--binsize',
+                         help = 'predicted resolustion, e.g.10kb, 25kb..., default=10000',
+                         type = int, default = 10000)
+
+
     ## Parse the command-line arguments
     commands = sys.argv[1:]
-    if ((not commands) or ((commands[0] in ['train', 'pred_chromosome'])
+    if ((not commands) or ((commands[0] in ['train', 'pred_chromosome','pred_genome'])
         and len(commands) == 1)):
         commands.append('-h')
     args = parser.parse_args(commands)
