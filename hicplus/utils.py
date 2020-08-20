@@ -74,16 +74,23 @@ def read_hic_header(hicfile):
 
     return info
 
-def matrix_extract(chrN1, binsize, hicfile):
+def matrix_extract(chrN1, chrN2, binsize, hicfile):
 
-    result = straw.straw('NONE', hicfile, str(chrN1),str(chrN1),'BP',binsize)
+    result = straw.straw('NONE', hicfile, str(chrN1),str(chrN2),'BP',binsize)
+
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
     value = result[2]
-    N = max(max(row)+1, max(col) + 1)
+    Nrow = max(row) + 1
+    Ncol = max(col) + 1
+    N = max(Nrow, Ncol)
+
     #print(N)
     M = csr_matrix((value, (row,col)), shape=(N,N))
     M = csr_matrix.todense(M)
+
+    return(M)
+
     # M = np.array(M)
     # x, y = np.where(M!=0)
     # M[y, x] = M[x, y]
@@ -92,11 +99,10 @@ def matrix_extract(chrN1, binsize, hicfile):
     #print(rowix,colix)
     #M = M[np.ix_(rowix, colix)]
     #N = M.shape[1]
-    return(M)
 
 def divide(HiCmatrix):
     subImage_size = 40
-    step = 5
+    step = 25
 
     #chrN = 21  ##need to change.
 
@@ -105,7 +111,7 @@ def divide(HiCmatrix):
     for i in range(0, total_loci, step):
         result = []
         index = []
-        for j in range(0, total_loci,step ):
+        for j in range(0, total_loci, ):
             if (i + subImage_size >= total_loci or j + subImage_size >= total_loci):
                 continue
             subImage = HiCmatrix[i:i + subImage_size, j:j + subImage_size]
@@ -156,4 +162,3 @@ def genDownsample(original_sample, rate):
 
 if __name__ == "__main__":
     main()
-
