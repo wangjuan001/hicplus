@@ -13,7 +13,6 @@ from hicplus import utils
 from time import gmtime, strftime
 from datetime import datetime
 import argparse
-#import cooler
 
 startTime = datetime.now()
 
@@ -70,8 +69,6 @@ def predict(M,N,inmodel):
 
     return(prediction_1)
 
-
-
 def chr_pred(hicfile, chrN1, chrN2, binsize, inmodel):
     M = utils.matrix_extract(chrN1, chrN2, binsize, hicfile)
     #print(M.shape)
@@ -79,39 +76,43 @@ def chr_pred(hicfile, chrN1, chrN2, binsize, inmodel):
 
     chr_Mat = predict(M, N, inmodel)
 
-def writeBed(Mat, outname):
+
+#     if Ncol > Nrow:
+#         chr_Mat = chr_Mat[:Ncol, :Nrow]
+#         chr_Mat = chr_Mat.T
+#     if Nrow > Ncol: 
+#         chr_Mat = chr_Mat[:Nrow, :Ncol]
+#     print(dat.head())       
+    return(chr_Mat)
+
+
+
+def writeBed(Mat, outname,binsize, chrN1,chrN2):
     with open(outname,'w') as chrom:
         r, c = Mat.nonzero()
         for i in range(r.size):
             contact = int(round(Mat[r[i],c[i]]))
             if contact == 0:
                 continue
-            if r[i]*binsize > Len1 or (r[i]+1)*binsize > Len1:
-                continue
-            if c[i]*binsize > Len2 or (c[i]+1)*binsize > Len2:
-                continue
-            line = [c1, r[i]*binsize, (r[i]+1)*binsize,
-            c2, c[i]*binsize, (c[i]+1)*binsize, contact]
+            #if r[i]*binsize > Len1 or (r[i]+1)*binsize > Len1:
+            #    continue
+            #if c[i]*binsize > Len2 or (c[i]+1)*binsize > Len2:
+            #    continue
+            line = [chrN1, r[i]*binsize, (r[i]+1)*binsize,
+               chrN2, c[i]*binsize, (c[i]+1)*binsize, contact]
             chrom.write('chr'+str(line[0])+':'+str(line[1])+'-'+str(line[2])+
                      '\t'+'chr'+str(line[3])+':'+str(line[4])+'-'+str(line[5])+'\t'+str(line[6])+'\n')
 
-def main():
-    chrN1= args.chrN[0]
-    chrN2 = args.chrN[1]
+def main(args):
+    chrN1, chrN2 = args.chrN
     binsize = args.binsize
     inmodel = args.model
     hicfile = args.inputfile
-    outname = args.output
-    #outname = 'chr1.pred.txt'
-    #### for cool inputfile.
-    #c = cooler.Cooler('{}'.format(hicfile))
-    #mat = c.matrix(balance=False).fetch('chr'+str(chrN1))
-    #N = mat.shape[0]
-    #print(N)
-    #mat = predict(mat, N, inmodel)
+    name = os.path.basename(inmodel).split('.')[0]
+    outname = 'chr'+str(chrN1)+'_'+name+'_'+str(binsize//1000)+'pred.txt'
     Mat = chr_pred(hicfile,chrN1,chrN2,binsize,inmodel)
     print(Mat.shape)
-    writeBed(Mat, outname)
+    writeBed(Mat, outname, binsize,chrN1, chrN2)
         #print(enhM.shape)
 if __name__ == '__main__':
     main()
