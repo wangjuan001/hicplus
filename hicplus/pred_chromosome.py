@@ -108,8 +108,9 @@ def main(args):
     binsize = args.binsize
     inmodel = args.model
     hicfile = args.inputfile
-    name = os.path.basename(inmodel).split('.')[0]
-    outname = 'chr'+str(chrN1)+'_'+name+'_'+str(binsize//1000)+'pred.txt'
+    #name = os.path.basename(inmodel).split('.')[0]
+    #outname = 'chr'+str(chrN1)+'_'+name+'_'+str(binsize//1000)+'pred.txt'
+    outname = args.outputfile
     Mat = chr_pred(hicfile,chrN1,chrN2,binsize,inmodel)
     print(Mat.shape)
     writeBed(Mat, outname, binsize,chrN1, chrN2)
