@@ -69,6 +69,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -i INPUTFILE, --inputfile INPUTFILE
                         path to a .hic file.
+  -o OUTPUTFILE, --outputfile OUTPUTFILE
+                        path to an output file.
   -m MODEL, --model MODEL
                         path to a model file.
   -b BINSIZE, --binsize BINSIZE
@@ -79,7 +81,7 @@ optional arguments:
 ```
 e.g.
 ```
-hicplus pred_chromosome -i test.hic -m ../HiCplus_straw/model/pytorch_HindIII_model_40000 -c 19 22
+hicplus pred_chromosome -i test.hic -o test.out.txt -m ../HiCplus_straw/model/pytorch_HindIII_model_40000 -c 19 22 
 ```
 
 ### Model
