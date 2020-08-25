@@ -84,6 +84,18 @@ e.g.
 hicplus pred_chromosome -i test.hic -o test.out.txt -m ../HiCplus_straw/model/pytorch_HindIII_model_40000 -c 19 22 
 ```
 
+## Transform output matrix to .cool file
+To transform the output matrix to .cool file, you can refer to the bash script hicplus/mat2cool.sh. To run the script, you can take the following steps:
+1. Specify the chromosome size file for the species you work on. In the example, we used the mm10.chrom.sizes and the related file is provided as well.
+2. As the transform is based on cooler https://github.com/mirnylab/cooler, install cooler first if you haven't done so. 
+```
+conda install -c conda-forge -c bioconda cooler
+```
+3. After the above setting, you should be able to run the script:
+```
+sh mat2cool.sh test.out.txt
+```
+
 ### Model
 It's important to use a suitable model when doing prediction. At this moment we only provide one model, which is suitable for 200~300M reads hic data (downsampling rate at 16).   
 
