@@ -100,8 +100,7 @@ def matrix_extract(chrN1, chrN2, binsize, hicfile):
     #M = M[np.ix_(rowix, colix)]
     #N = M.shape[1]
     
- def train_matrix_extract(chrN1, binsize, hicfile):
-
+def train_matrix_extract(chrN1, binsize, hicfile):
     result = straw.straw('NONE', hicfile, str(chrN1),str(chrN1),'BP',binsize)
     row = [r//binsize for r in result[0]]
     col = [c//binsize for c in result[1]]
@@ -113,7 +112,6 @@ def matrix_extract(chrN1, chrN2, binsize, hicfile):
     M = np.array(M)
     x, y = np.where(M!=0)
     M[y, x] = M[x, y]
-    
     return(M)
 
 
