@@ -99,6 +99,23 @@ def matrix_extract(chrN1, chrN2, binsize, hicfile):
     #print(rowix,colix)
     #M = M[np.ix_(rowix, colix)]
     #N = M.shape[1]
+    
+ def train_matrix_extract(chrN1, binsize, hicfile):
+
+    result = straw.straw('NONE', hicfile, str(chrN1),str(chrN1),'BP',binsize)
+    row = [r//binsize for r in result[0]]
+    col = [c//binsize for c in result[1]]
+    value = result[2]
+    N = max(max(row)+1, max(col) + 1)
+    #print(N)
+    M = csr_matrix((value, (row,col)), shape=(N,N))
+    M = csr_matrix.todense(M)
+    M = np.array(M)
+    x, y = np.where(M!=0)
+    M[y, x] = M[x, y]
+    
+    return(M)
+
 
 def divide(HiCmatrix):
     subImage_size = 40
