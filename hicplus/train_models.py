@@ -24,13 +24,13 @@ def main(args):
 
     print('dividing, filtering and downsampling files...')
 
-    highres_sub, index = utils.divide(highres)
+    highres_sub, index = utils.train_divide(highres)
 
     print(highres_sub.shape)
     #np.save(infile+"highres",highres_sub)
 
     lowres = utils.genDownsample(highres,1/float(args.scalerate))
-    lowres_sub,index = utils.divide(lowres)
+    lowres_sub,index = utils.train_divide(lowres)
     print(lowres_sub.shape)
     #np.save(infile+"lowres",lowres_sub)
 
