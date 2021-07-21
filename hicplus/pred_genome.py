@@ -50,8 +50,8 @@ def pred_genome(hicfile, binsize, inmodel):
                                c2, c[i]*binsize, (c[i]+1)*binsize, contact]
                         genome.write('chr'+str(line[0])+':'+str(line[1])+'-'+str(line[2])+
                                  '\t'+'chr'+str(line[3])+':'+str(line[4])+'-'+str(line[5])+'\t'+str(line[6])+'\n')
-                 except:
-                     pass
+                except:
+                    pass
 
 
 
