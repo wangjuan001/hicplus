@@ -54,7 +54,7 @@ def getargs():
                          help = 'predicted resolustion, e.g.10kb, 25kb..., default=10000',
                          type = int, default = 10000)
         i.add_argument('-c','--chrN', nargs=2, metavar=('chrN1','chrN2'),
-                         type=int,required=True, help='chromosome number')
+                         type=str,required=True, help='chromosome number')
 
 
     for i in subs[2:]:
