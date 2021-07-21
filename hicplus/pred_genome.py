@@ -35,20 +35,23 @@ def pred_genome(hicfile, binsize, inmodel):
                     continue
                 if c1 == 'M' or c2 == 'M':
                     continue
-                Mat = pred_chromosome.chr_pred(hicfile, c1, c2, binsize, inmodel)
-                r, c = Mat.nonzero()
-                for i in range(r.size):
-                    contact = int(round(Mat[r[i],c[i]]))
-                    if contact == 0:
-                        continue
-                    if r[i]*binsize > Len1 or (r[i]+1)*binsize > Len1:
-                        continue
-                    if c[i]*binsize > Len2 or (c[i]+1)*binsize > Len2:
-                        continue
-                    line = [c1, r[i]*binsize, (r[i]+1)*binsize,
-                           c2, c[i]*binsize, (c[i]+1)*binsize, contact]
-                    genome.write('chr'+str(line[0])+':'+str(line[1])+'-'+str(line[2])+
+                try:
+                    Mat = pred_chromosome.chr_pred(hicfile, c1, c2, binsize, inmodel)
+                    r, c = Mat.nonzero()
+                    for i in range(r.size):
+                        contact = int(round(Mat[r[i],c[i]]))
+                        if contact == 0:
+                            continue
+                        if r[i]*binsize > Len1 or (r[i]+1)*binsize > Len1:
+                            continue
+                        if c[i]*binsize > Len2 or (c[i]+1)*binsize > Len2:
+                            continue
+                        line = [c1, r[i]*binsize, (r[i]+1)*binsize,
+                               c2, c[i]*binsize, (c[i]+1)*binsize, contact]
+                        genome.write('chr'+str(line[0])+':'+str(line[1])+'-'+str(line[2])+
                                  '\t'+'chr'+str(line[3])+':'+str(line[4])+'-'+str(line[5])+'\t'+str(line[6])+'\n')
+                 except:
+                     pass
 
 
 
